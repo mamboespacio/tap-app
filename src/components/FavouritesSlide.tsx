@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/scss';
 import '@ionic/react/css/ionic-swiper.css';
-import { Category } from "../hooks/types";
+import { Product } from "../hooks/types";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../data/loaders";
+import { getFavouriteProducts } from "../data/loaders";
 
-export const CategorySlide = () => {
+export const FavouriteSlide = () => {
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getCategories,
+    queryKey: ['favouriteProducts'],
+    queryFn: getFavouriteProducts,
   })
   if (isPending) {
     return <span>Loading...</span>
@@ -17,22 +17,22 @@ export const CategorySlide = () => {
   if (isError) {
     return <span>Error: {error.message}</span>
   }
+  console.log(data);
   return (
     <Swiper
-      id="slider"
       slidesPerView={3}
       spaceBetween={10}
     >
-      { data?.map((item:Category, index:number) => (
+      {data?.map((item: Product, index: number) => (
         <SwiperSlide key={index}>
-          <Link to={`/category/${item.slug}`} className="non-link">
-            <p className="text-sm text-left">{item.name}</p> 
+          <Link to={`/vendors/${item.id}`} className="non-link">   
             <div className="rounded-lg overflow-hidden ">
               <img className="aspect-square" src='assets/veggie3.png' alt={item.name} />
             </div>
+            <p className="text-sm text-left">{item.name}</p>
           </Link>
         </SwiperSlide>
-        ))
+      ))
       }
     </Swiper>
   )

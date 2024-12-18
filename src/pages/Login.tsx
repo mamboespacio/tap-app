@@ -1,51 +1,97 @@
 import React, { useState } from "react";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonImg, IonInput, IonButton } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonImg, IonInput, IonButton, IonToast, useIonRouter } from '@ionic/react';
+import { Link } from "react-router-dom";
 import './Tab1.css';
+import { getStrapiURL } from "../lib/utils";
+import axios from "axios";
+import { z } from "zod";
+import { ZodErrors } from "../components/ZodError";
+import { useUserStore } from "../data/UserStore";
+import { useSessionStore } from "../data/SessionStore";
 
 export interface Props {}
 
+interface formData {
+  username:string,
+  password: string,
+  zodErrors: any,
+  strapiErrors: any,
+  data: any,
+  message: string,
+}
+
+const initialState = {
+  username: "",
+  password: "",
+  zodErrors: "",
+  strapiErrors: "",
+  data: "",
+  message: "",
+}
+
 const Login: React.FC<Props> = () => {
-  const [username, setUserName] = useState<any>("");
-  const [password, setPassword] = useState<any>("");
+
+  const [isOpen, setIsOpen] = useState(false);
+  const userStore = useUserStore();
+  const sessionStore = useSessionStore();
+
+  const schemaRegister = z.object({
+    username: z.string().min(3).max(20, {
+      message: "El usuario debe contener enrte 8 y 20 caracteres",
+    }),
+    password: z.string().min(6).max(100, {
+      message: "La contraseña debe contener al menos 8 caracteres y un numero",
+    }),
+  });
+
+  const [formState, setFormState] = useState<formData>(initialState);
+  const baseUrl = getStrapiURL();
+  const router = useIonRouter();
 
   const doLogin = async () => {
-    console.log(username, password);
-    const URL = "http://localhost:1337";
-
-    const loginResp = await fetch(URL + "/api/auth/local", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({
-        identifier: username,
-        password: password,
-      }),
+    const validatedFields = schemaRegister.safeParse({
+      username: formState.username,
+      password: formState.password,
     });
-    const loginInfo =  await loginResp.json();
-
-    if (loginInfo?.statusCode) {
-        alert("Error: " + loginInfo.data[0].messages[0].message)
-    } else {
-        alert("User Logged In");
-        console.log(loginInfo);
+    
+    if (!validatedFields.success) {
+      // console.log(validatedFields.error);
+      return setFormState({
+        ...formState,
+        zodErrors: validatedFields.error.flatten().fieldErrors,
+        strapiErrors: null,
+        message: "Missing Fields. Failed to Register.",
+      })
     }
+
+    axios
+      .post("http://localhost:1337/api/auth/local", {
+        identifier: formState.username,
+        password: formState.password,
+      })
+      .then((response) => {
+        console.log("User profile", response.data.user);
+        console.log("User token", response.data.jwt);
+        userStore.setUser(response.data.user);
+        sessionStore.setSession(response.data.jwt);
+        router.push('/home', 'root', 'replace');
+      })
+      .catch((error) => {
+        setFormState({ ...formState, strapiErrors: error.response.data.error.message })
+        setIsOpen(true)
+        // console.log("An error occurred:", error.response);
+      });
   };
+
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader className="font-semibold text-center shadow-none">
         <IonToolbar>
-          <IonTitle>Login</IonTitle>
+          <IonTitle className="text-sm font-semibold text-center">Login</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Login</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <div className="space-y-8">
+        <div className="space-y-8 ion-padding">
         <div className="flex justify-center">
           <IonImg
             className="w-1/2"
@@ -61,8 +107,9 @@ const Login: React.FC<Props> = () => {
                 labelPlacement="floating"
                 fill="outline"
                 type="text"
-                onIonChange={(e: any) => setUserName(e.target.value)}
+                onIonChange={(e: any) => setFormState({ ...formState, username: e.target.value })}
               />
+              <ZodErrors error={formState?.zodErrors?.username} />
             </div>
             <div>
               <IonInput
@@ -70,14 +117,16 @@ const Login: React.FC<Props> = () => {
                 labelPlacement="floating"
                 fill="outline"
                 type="password"
-                onIonChange={(e: any) => setPassword(e.target.value)}
+                onIonChange={(e: any) => setFormState({ ...formState, password: e.target.value })}
               />
+              <ZodErrors error={formState?.zodErrors?.password} />
               <a className="text-sm" href="#">Olvidé mi contraseña</a>
             </div>
             <div className="flex justify-center">
               <div>
                 <IonButton
-                  className="rounded-full normal-case"
+                  shape="round"
+                  className="normal-case"
                   onClick={() => doLogin()}
                   >
                   Iniciar sesión
@@ -85,21 +134,29 @@ const Login: React.FC<Props> = () => {
               </div>
             </div>
           </div>
-          
           <div className="flex justify-center">
             <div>
-              <IonButton
-                color={"light"}
-                className="rounded-full normal-case"
-                onClick={() => doLogin()}
-                >
-                Registrarme
-              </IonButton>
+              <Link to="/register" className="non-link">
+                <IonButton
+                  shape="round"
+                  color={"light"}
+                  className="normal-case"
+                  >
+                  Registrarme
+                </IonButton>
+              </Link>
             </div>
           </div>
+          {formState.strapiErrors && (
+            <IonToast
+              isOpen={isOpen}
+              message={formState.strapiErrors}
+              duration={5000}
+              >
+            </IonToast>
+          )}
         </form>
         </div>
-        
       </IonContent>
     </IonPage>
   );
