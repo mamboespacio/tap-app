@@ -53,6 +53,17 @@ export async function getCategories() {
   return fetchData(`${baseUrl}/api/categories?${query}`);
 }
 
+export async function getProducts() {
+  const PAGE_SIZE = 2;
+  const query = qs.stringify({
+    sort: ["name:desc"],
+    pagination: {
+      pageSize: PAGE_SIZE,
+    },
+  });
+  return fetchData(`${baseUrl}/api/products?${query}`);
+}
+
 export async function getOnSaleProducts() {
   const PAGE_SIZE = 2;
   const query = qs.stringify({

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { IonItem, IonButton, IonButtons, IonLabel, IonContent, IonGrid, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonNote, IonPage, IonRow, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
-import { cart, chevronBackOutline, searchOutline, bagOutline, chevronForward } from "ionicons/icons";
+import { cart, chevronBackOutline, searchOutline, bagOutline, chevronForward, trash, trashBin } from "ionicons/icons";
 import { useParams } from "react-router"
 import { Vendor, Product } from "../hooks/types";
 import { useQuery } from "@tanstack/react-query";
@@ -58,7 +58,11 @@ const CartPage = () => {
           </IonButtons>
           <IonTitle className="text-sm font-semibold text-center">Confirma tu pedido</IonTitle>
           <IonButtons slot="end">
-            
+            <IonButton>
+              <IonButton color="dark">
+                <IonIcon icon={trashBin} />
+              </IonButton>
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>

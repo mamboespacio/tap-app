@@ -13,12 +13,12 @@ import {
   IonCardSubtitle,
   IonCardTitle 
 } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import './Tab1.css';
+import { useUserStore } from "../data/UserStore";
 
 export interface Props {}
 
-  const Profile: React.FC<Props> = () => {
+const Profile: React.FC<Props> = () => {
+  const user = useUserStore((state) => state.user);
   return (
     <IonPage>
       <IonHeader>
@@ -35,8 +35,8 @@ export interface Props {}
         <div className="">
           <IonCard color={"light"}>
             <IonCardHeader>
-              <IonCardTitle>Lorena suarez</IonCardTitle>
-              <IonCardSubtitle>lorenasuarez98@gmail.com</IonCardSubtitle>
+              <IonCardTitle>{user.fullName}</IonCardTitle>
+              <IonCardSubtitle>{user.email}</IonCardSubtitle>
             </IonCardHeader>
           </IonCard>
           <IonItemDivider>
