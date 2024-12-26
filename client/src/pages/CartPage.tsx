@@ -10,25 +10,39 @@ import { IonBackButton, IonCard, IonCardContent, IonFooter } from "@ionic/react"
 import { Link } from "react-router-dom";
 import CartItem from "../components/CartItem";
 import axios from "axios";
-
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
-
-initMercadoPago('TEST-a8cef775-7dae-43d3-b850-f2e50f6a0130');
-import { CardPayment } from '@mercadopago/sdk-react';
 
 interface Params {
   id: string;
 }
 
 const CartPage = () => {
+  initMercadoPago(process.env.MP_PUBLIC_KEY, {
+    locale: 'es-AR',
+  });
   const [preferenceId, setPreferenceId] = useState(null);
   const createPreference = async () => {
     try {
       const response = await axios.post('http://localhost:3000/create_preference', {
-        title: 'mi producto',
-        quantity: 1,
-        price: 300
-      })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        items: [
+          {
+            title: 'Dummy Title',
+            description: 'Dummy description',
+            quantity: 1,
+            currency_id: 'ARS',
+            unit_price: 10,
+          },
+        ],
+        back_urls: {
+          "success": "https://www.success.com",
+          "failure": "http://www.failure.com",
+          "pending": "http://www.pending.com"
+        },
+        auto_return: "approved",
+      });
       const {id} = response.data
       return id;
     }
@@ -95,8 +109,26 @@ const CartPage = () => {
           </div>
         </div>
         <div className="flex flex-column py-2 border-b-1 mt-8 justify-center">
-          { preferenceId && (<Wallet initialization={preferenceId}></Wallet>)}
-          <IonButton className="normal-case" shape="round" onClick={handleBuy}>Confirmar pago</IonButton>
+          { preferenceId ? 
+            <Wallet
+              initialization={{
+                preferenceId: preferenceId,
+                redirectMode: 'self',
+              }}  
+              customization={{
+                visual:{
+                  borderRadius: '999px',
+                }
+              }}
+            />:
+            <IonButton
+              className="normal-case"
+              shape="round" 
+              onClick={handleBuy}
+              >
+                Confirmar pedido
+            </IonButton>
+          }
         </div>
       </IonContent>
     </IonPage>
