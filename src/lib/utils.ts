@@ -44,7 +44,7 @@ export function flattenAttributes(data:any) {
 
 export function getStrapiURL() {
   // return process.env.STRAPI_URL ?? "http://127.0.0.1:1337";
-  return "https://tap-cms-4a4db946442e.herokuapp.com/";
+  return "https://tap-cms-4a4db946442e.herokuapp.com";
 }
 
 export async function getAuthToken() {
