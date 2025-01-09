@@ -12,6 +12,7 @@ export interface Props {}
 
 interface formData {
   username:string,
+  email: string,
   password: string,
   dni: string,
   fullName: string,
@@ -23,6 +24,7 @@ interface formData {
 
 const initialState = {
   username: "",
+  email: "",
   password: "",
   dni: "",
   fullName: "",
@@ -56,6 +58,7 @@ const Register: React.FC<Props> = () => {
     axios
       .post(`${baseUrl}/api/auth/local/register`, {
         username: formState.username,
+        email: formState.email,
         password: formState.password,
         fullName: formState.fullName,
         dni: formState.dni,
@@ -120,11 +123,20 @@ const Register: React.FC<Props> = () => {
             <div>
               <IonInput
                 name="username"
+                label="username"
+                labelPlacement="floating"
+                fill="outline"
+                type="text"
+                onIonChange={(e: any) => setFormState({ ...formState, username: e.target.value })}              />
+            </div>
+            <div>
+              <IonInput
+                name="email"
                 label="Email"
                 labelPlacement="floating"
                 fill="outline"
                 type="email"
-                onIonChange={(e: any) => setFormState({ ...formState, username: e.target.value })}              />
+                onIonChange={(e: any) => setFormState({ ...formState, email: e.target.value })}              />
             </div>
             <div>
               <IonInput
