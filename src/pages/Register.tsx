@@ -60,8 +60,6 @@ const Register: React.FC<Props> = () => {
         username: formState.username,
         email: formState.email,
         password: formState.password,
-        fullName: formState.fullName,
-        dni: formState.dni,
       })
       .then((response) => {
         console.log("User profile", response.data.user);
