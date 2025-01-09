@@ -1,39 +1,78 @@
 import React, { useState } from "react";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonImg, IonInput, IonButton } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonImg, IonInput, IonButton, IonToast, useIonRouter } from '@ionic/react';
 import './Tab1.css';
 import { getStrapiURL } from "../lib/utils";
+import axios from "axios";
+import { z } from "zod";
+import { ZodErrors } from "../components/ZodError";
+import { useUserStore } from "../data/UserStore";
+import { useSessionStore } from "../data/SessionStore";
 
 export interface Props {}
 
+interface formData {
+  email:string,
+  password: string,
+  dni: string,
+  fullName: string,
+  zodErrors: any,
+  strapiErrors: any,
+  data: any,
+  message: string,
+}
+
+const initialState = {
+  email: "",
+  password: "",
+  dni: "",
+  fullName: "",
+  zodErrors: "",
+  strapiErrors: "",
+  data: "",
+  message: "",
+}
+
 const Register: React.FC<Props> = () => {
-  const [username, setUserName] = useState<any>("");
-  const [email, setEmail] = useState<any>("");
-  const [password, setPassword] = useState<any>("");
+
+  const [isOpen, setIsOpen] = useState(false);
+  const userStore = useUserStore();
+  const sessionStore = useSessionStore();
 
   const doRegister = async () => {
-    console.log(username, email + " " + password);
-    const baseUrl = getStrapiURL();
-    const url = new URL("/api/auth/local/register", baseUrl);
 
-    const signUpResp = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({
-        username,
-        email,
-        password,
+    const schemaRegister = z.object({
+      email: z.string().min(3).max(20, {
+        message: "El usuario debe contener enrte 8 y 20 caracteres",
+      }),
+      password: z.string().min(6).max(100, {
+        message: "La contraseña debe contener al menos 8 caracteres y un numero",
       }),
     });
-    const signUpInfo = await signUpResp.json();
 
-    if (signUpInfo?.statusCode) {
-      alert("Error: " + signUpInfo.data[0].messages[0].message);
-    } else {
-      alert("User Account Created");
-      console.log(signUpInfo);
-    }
+    const [formState, setFormState] = useState<formData>(initialState);
+    const baseUrl = getStrapiURL();
+    const router = useIonRouter();
+
+    axios
+      .post(`${baseUrl}/api/auth/local/register`, {
+        email: formState.username,
+        password: formState.password,
+        fullName: formState.fullName,
+        dni: formState.dni,
+      })
+      .then((response) => {
+        console.log("User profile", response.data.user);
+        console.log("User token", response.data.jwt);
+        userStore.setUser(response.data.user);
+        sessionStore.setSession(response.data.jwt);
+        router.push('/home', 'root', 'replace');
+      })
+      .catch((error) => {
+        setFormState({ ...formState, strapiErrors: error.response.data.error.message })
+        setIsOpen(true)
+        // console.log("An error occurred:", error.response);
+      });
+
   };
   return (
     <IonPage>
