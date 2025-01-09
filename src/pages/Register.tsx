@@ -104,7 +104,7 @@ const Register: React.FC<Props> = () => {
                 labelPlacement="floating"
                 fill="outline"
                 type="text"
-                onIonChange={(e: any) => setUserName(e.target.value)}
+                onIonChange={(e: any) => setFormState({ ...formState, fullName: e.target.value })}
               />
             </div>
             <div>
@@ -114,7 +114,7 @@ const Register: React.FC<Props> = () => {
                 labelPlacement="floating"
                 fill="outline"
                 type="number"
-                onIonChange={(e: any) => setUserName(e.target.value)}
+                onIonChange={(e: any) => setFormState({ ...formState, dni: e.target.value })}
               />
             </div>
             <div>
@@ -124,8 +124,7 @@ const Register: React.FC<Props> = () => {
                 labelPlacement="floating"
                 fill="outline"
                 type="email"
-                onIonChange={(e: any) => setUserName(e.target.value)}
-              />
+                onIonChange={(e: any) => setFormState({ ...formState, username: e.target.value })}              />
             </div>
             <div>
               <IonInput
@@ -134,8 +133,7 @@ const Register: React.FC<Props> = () => {
                 labelPlacement="floating"
                 fill="outline"
                 type="password"
-                onIonChange={(e: any) => setPassword(e.target.value)}
-              />
+                onIonChange={(e: any) => setFormState({ ...formState, password: e.target.value })}              />
             </div>
             <div className="flex justify-center">
               <div>
