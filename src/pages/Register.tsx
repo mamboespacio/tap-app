@@ -15,7 +15,7 @@ const Register: React.FC<Props> = () => {
     const baseUrl = getStrapiURL();
     const url = new URL("/api/auth/local/register", baseUrl);
 
-    const signUpResp = await fetch(URL + "/auth/local/register", {
+    const signUpResp = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
       },
