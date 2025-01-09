@@ -23,7 +23,7 @@ const Home = () => {
         <IonToolbar>
           <IonButtons slot="start">
             <IonButton>
-              <IonButton className="normal-case space-x-1" color="dark" routerLink="/location">
+              <IonButton className="font-semibold normal-case space-x-1" color="dark" routerLink="/location">
                 <IonIcon icon={pin} />
                 <div>{user.fullName}, al rescate!</div>
               </IonButton>

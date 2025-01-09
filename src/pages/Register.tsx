@@ -11,7 +11,6 @@ import { useSessionStore } from "../data/SessionStore";
 export interface Props {}
 
 interface formData {
-  username:string,
   email: string,
   password: string,
   dni: string,
@@ -23,7 +22,6 @@ interface formData {
 }
 
 const initialState = {
-  username: "",
   email: "",
   password: "",
   dni: "",
@@ -41,9 +39,6 @@ const Register: React.FC<Props> = () => {
   const sessionStore = useSessionStore();
 
   const schemaRegister = z.object({
-    username: z.string().min(3).max(20, {
-      message: "El usuario debe contener enrte 8 y 20 caracteres",
-    }),
     password: z.string().min(6).max(100, {
       message: "La contraseña debe contener al menos 8 caracteres y un numero",
     }),
@@ -54,16 +49,17 @@ const Register: React.FC<Props> = () => {
     const router = useIonRouter();
 
   const doRegister = async () => {
-
     axios
       .post(`${baseUrl}/api/auth/local/register`, {
-        username: formState.username,
+        username: formState.email,
         email: formState.email,
         password: formState.password,
+        dni: formState.dni,
+        fullName: formState.fullName,
       })
       .then((response) => {
-        console.log("User profile", response.data.user);
-        console.log("User token", response.data.jwt);
+        // console.log("User profile", response.data.user);
+        // console.log("User token", response.data.jwt);
         userStore.setUser(response.data.user);
         sessionStore.setSession(response.data.jwt);
         router.push('/home', 'root', 'replace');
@@ -73,21 +69,15 @@ const Register: React.FC<Props> = () => {
         setIsOpen(true)
         // console.log("An error occurred:", error.response);
       });
-
   };
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader className="shadow-none">
         <IonToolbar>
-          <IonTitle>Register</IonTitle>
+          <IonTitle className="text-sm font-semibold text-center">Registro</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Login</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <div className="space-y-8">
         <div className="flex justify-center">
           <IonImg
@@ -117,15 +107,6 @@ const Register: React.FC<Props> = () => {
                 type="number"
                 onIonChange={(e: any) => setFormState({ ...formState, dni: e.target.value })}
               />
-            </div>
-            <div>
-              <IonInput
-                name="username"
-                label="username"
-                labelPlacement="floating"
-                fill="outline"
-                type="text"
-                onIonChange={(e: any) => setFormState({ ...formState, username: e.target.value })}              />
             </div>
             <div>
               <IonInput

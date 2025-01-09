@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { IonItem, IonButton, IonButtons, IonLabel, IonContent, IonGrid, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonNote, IonPage, IonRow, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
-import { cart, chevronBackOutline, searchOutline, bagOutline, chevronForward, trash, trashBin } from "ionicons/icons";
+import { trashOutline } from "ionicons/icons";
 import { useParams } from "react-router"
 import { Vendor, Product } from "../hooks/types";
 import { useQuery } from "@tanstack/react-query";
@@ -56,11 +56,11 @@ const CartPage = () => {
           <IonButtons slot="start">
             <IonBackButton></IonBackButton>
           </IonButtons>
-          <IonTitle className="text-sm font-semibold text-center">Confirma tu pedido</IonTitle>
+          <IonTitle className="font-semibold text-center">Confirma tu pedido</IonTitle>
           <IonButtons slot="end">
             <IonButton>
               <IonButton color="dark">
-                <IonIcon icon={trashBin} />
+                Vaciar
               </IonButton>
             </IonButton>
           </IonButtons>
@@ -75,11 +75,18 @@ const CartPage = () => {
           <div className="">
             { cartProducts.length > 0 ? cartProducts.map(p => <CartItem key={p.product.id} item={p}></CartItem>) : 'No items yet'}
           </div>
+          <div className="flex justify-between items-center gap-x-5 border-b-[1px] py-2">
+            <p>Retiro:</p>
+            <p className="font-semibold">Gratis</p>
+          </div>
+          <div className="flex justify-between items-center gap-x-5 border-b-[1px] py-2">
+            <p>Total:</p>
+            <p></p>
+          </div>
           <div className="mt-3">
             <h1 className="font-semibold">Método de pago</h1>
             <IonItem lines="none" href="/card" button>
               <IonLabel>Selecionar...</IonLabel>
-              <IonIcon icon={chevronForward}></IonIcon>
             </IonItem>
           </div>
           <div className="mt-3">

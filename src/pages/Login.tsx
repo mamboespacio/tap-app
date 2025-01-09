@@ -87,7 +87,7 @@ const Login: React.FC<Props> = () => {
     <IonPage>
       <IonHeader className="font-semibold text-center shadow-none">
         <IonToolbar>
-          <IonTitle className="text-sm font-semibold text-center">Login</IonTitle>
+          <IonTitle className="text-sm font-semibold text-center shadow-none">Login</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
