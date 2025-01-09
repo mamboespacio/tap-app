@@ -38,20 +38,20 @@ const Register: React.FC<Props> = () => {
   const userStore = useUserStore();
   const sessionStore = useSessionStore();
 
-  const doRegister = async () => {
+  const schemaRegister = z.object({
+    username: z.string().min(3).max(20, {
+      message: "El usuario debe contener enrte 8 y 20 caracteres",
+    }),
+    password: z.string().min(6).max(100, {
+      message: "La contraseña debe contener al menos 8 caracteres y un numero",
+    }),
+  });
 
-    const schemaRegister = z.object({
-      username: z.string().min(3).max(20, {
-        message: "El usuario debe contener enrte 8 y 20 caracteres",
-      }),
-      password: z.string().min(6).max(100, {
-        message: "La contraseña debe contener al menos 8 caracteres y un numero",
-      }),
-    });
-
-    const [formState, setFormState] = useState<formData>(initialState);
+  const [formState, setFormState] = useState<formData>(initialState);
     const baseUrl = getStrapiURL();
     const router = useIonRouter();
+
+  const doRegister = async () => {
 
     axios
       .post(`${baseUrl}/api/auth/local/register`, {
