@@ -11,7 +11,7 @@ import { useSessionStore } from "../data/SessionStore";
 export interface Props {}
 
 interface formData {
-  email:string,
+  username:string,
   password: string,
   dni: string,
   fullName: string,
@@ -22,7 +22,7 @@ interface formData {
 }
 
 const initialState = {
-  email: "",
+  username: "",
   password: "",
   dni: "",
   fullName: "",
@@ -41,7 +41,7 @@ const Register: React.FC<Props> = () => {
   const doRegister = async () => {
 
     const schemaRegister = z.object({
-      email: z.string().min(3).max(20, {
+      username: z.string().min(3).max(20, {
         message: "El usuario debe contener enrte 8 y 20 caracteres",
       }),
       password: z.string().min(6).max(100, {
@@ -55,7 +55,7 @@ const Register: React.FC<Props> = () => {
 
     axios
       .post(`${baseUrl}/api/auth/local/register`, {
-        email: formState.username,
+        username: formState.username,
         password: formState.password,
         fullName: formState.fullName,
         dni: formState.dni,
@@ -119,7 +119,7 @@ const Register: React.FC<Props> = () => {
             </div>
             <div>
               <IonInput
-                name="email"
+                name="username"
                 label="Email"
                 labelPlacement="floating"
                 fill="outline"
