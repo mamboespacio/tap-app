@@ -65,7 +65,7 @@ const Login: React.FC<Props> = () => {
     }
 
     axios
-      .post("http://localhost:1337/api/auth/local", {
+      .post(`${baseUrl}/api/auth/local`, {
         identifier: formState.username,
         password: formState.password,
       })
