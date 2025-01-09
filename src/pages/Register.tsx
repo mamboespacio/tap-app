@@ -11,6 +11,7 @@ import { useSessionStore } from "../data/SessionStore";
 export interface Props {}
 
 interface formData {
+  username:string,
   email: string,
   password: string,
   dni: string,
@@ -22,6 +23,7 @@ interface formData {
 }
 
 const initialState = {
+  username: "",
   email: "",
   password: "",
   dni: "",
@@ -39,6 +41,9 @@ const Register: React.FC<Props> = () => {
   const sessionStore = useSessionStore();
 
   const schemaRegister = z.object({
+    username: z.string().min(3).max(20, {
+      message: "El usuario debe contener enrte 8 y 20 caracteres",
+    }),
     password: z.string().min(6).max(100, {
       message: "La contraseña debe contener al menos 8 caracteres y un numero",
     }),
@@ -51,6 +56,7 @@ const Register: React.FC<Props> = () => {
   const doRegister = async () => {
     axios
       .post(`${baseUrl}/api/auth/local/register`, {
+        username: formState.email,
         email: formState.email,
         password: formState.password,
         dni: formState.dni,
