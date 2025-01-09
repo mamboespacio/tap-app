@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonImg, IonInput, IonButton } from '@ionic/react';
 import './Tab1.css';
+import { getStrapiURL } from "../lib/utils";
 
 export interface Props {}
 
@@ -11,7 +12,8 @@ const Register: React.FC<Props> = () => {
 
   const doRegister = async () => {
     console.log(username, email + " " + password);
-    const URL = "http://localhost:1337";
+    const baseUrl = getStrapiURL();
+    const url = new URL("/api/auth/local/register", baseUrl);
 
     const signUpResp = await fetch(URL + "/auth/local/register", {
       headers: {
