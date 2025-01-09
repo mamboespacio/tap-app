@@ -21,17 +21,12 @@ const Profile: React.FC<Props> = () => {
   const user = useUserStore((state) => state.user);
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader className="shadow-none">
         <IonToolbar>
-          <IonTitle>Profile</IonTitle>
+          <IonTitle className="font-semibold text-center">Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Profile</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <div className="">
           <IonCard color={"light"}>
             <IonCardHeader>
@@ -39,7 +34,7 @@ const Profile: React.FC<Props> = () => {
               <IonCardSubtitle>{user.email}</IonCardSubtitle>
             </IonCardHeader>
           </IonCard>
-          <IonItemDivider>
+          <IonItemDivider className="bg-transparent">
             <IonLabel>Tu actividad</IonLabel>
           </IonItemDivider>
           <IonItem lines="none" button>
@@ -54,7 +49,7 @@ const Profile: React.FC<Props> = () => {
           <IonItem lines="none" button>
             <IonLabel>Historial de compras</IonLabel>
           </IonItem>
-          <IonItemDivider>
+          <IonItemDivider className="bg-transparent">
             <IonLabel>Configuración</IonLabel>
           </IonItemDivider>
           <IonItem lines="none" button>

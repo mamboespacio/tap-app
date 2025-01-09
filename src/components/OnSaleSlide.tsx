@@ -17,7 +17,7 @@ export const OnSaleSlide = () => {
   if (isError) {
     return <span>Error: {error.message}</span>
   }
-  console.log(data);
+  // console.log(data);
   return (
     <Swiper
       slidesPerView={2}
@@ -32,8 +32,8 @@ export const OnSaleSlide = () => {
             </div>
             <p className="text-sm text-left">{item.name}</p>
             <p className="text-sm text-left space-x-1">
-              <span className="line-through">${item.price}</span>
-              {item.onSale && (<span>${item.salePrice}</span>)}
+              <span>${item.price}</span>
+              {/* {item.onSale && (<span>${item.salePrice}</span>)} */}
             </p>
           </Link>
         </SwiperSlide>

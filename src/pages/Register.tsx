@@ -54,16 +54,17 @@ const Register: React.FC<Props> = () => {
     const router = useIonRouter();
 
   const doRegister = async () => {
-
     axios
       .post(`${baseUrl}/api/auth/local/register`, {
         username: formState.username,
         email: formState.email,
         password: formState.password,
+        dni: formState.dni,
+        fullName: formState.fullName,
       })
       .then((response) => {
-        console.log("User profile", response.data.user);
-        console.log("User token", response.data.jwt);
+        // console.log("User profile", response.data.user);
+        // console.log("User token", response.data.jwt);
         userStore.setUser(response.data.user);
         sessionStore.setSession(response.data.jwt);
         router.push('/home', 'root', 'replace');
@@ -73,21 +74,15 @@ const Register: React.FC<Props> = () => {
         setIsOpen(true)
         // console.log("An error occurred:", error.response);
       });
-
   };
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader className="shadow-none">
         <IonToolbar>
-          <IonTitle>Register</IonTitle>
+          <IonTitle className="text-sm font-semibold text-center">Registro</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Login</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <div className="space-y-8">
         <div className="flex justify-center">
           <IonImg

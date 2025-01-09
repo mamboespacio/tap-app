@@ -1,5 +1,4 @@
 import { Redirect, Route } from 'react-router-dom';
-
 import {
   IonApp,
   IonIcon,
@@ -56,9 +55,6 @@ import './theme/variables.css';
 import VendorPage from './pages/VendorPage';
 import SearchPage from './pages/SearchPage';
 import CartPage from './pages/CartPage';
-
-import { Preferences } from '@capacitor/preferences';
-import { useUserStore } from "./data/UserStore";
 
 setupIonicReact();
 

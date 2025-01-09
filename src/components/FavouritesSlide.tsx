@@ -17,7 +17,7 @@ export const FavouriteSlide = () => {
   if (isError) {
     return <span>Error: {error.message}</span>
   }
-  console.log(data);
+  // console.log(data);
   return (
     <Swiper
       slidesPerView={3}
@@ -25,11 +25,11 @@ export const FavouriteSlide = () => {
     >
       {data?.map((item: Product, index: number) => (
         <SwiperSlide key={index}>
-          <Link to={`/vendors/${item.id}`} className="non-link">   
+          <Link to={`/vendors/${item.id}`} className="non-link"> 
+            <p className="text-sm text-left">{item.name}</p>  
             <div className="rounded-lg overflow-hidden ">
               <img className="aspect-square" src='assets/veggie3.png' alt={item.name} />
             </div>
-            <p className="text-sm text-left">{item.name}</p>
           </Link>
         </SwiperSlide>
       ))

@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { IonButton, IonButtons, IonList, IonItem, IonContent, IonHeader, IonIcon, IonPage, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
-import { cart, chevronBackOutline, searchOutline, bagOutline, trashBin } from "ionicons/icons";
-import { useParams } from "react-router"
 import { Vendor, Product } from "../hooks/types";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../data/loaders";
@@ -47,14 +45,7 @@ const SearchPage = () => {
           <IonButtons slot="start">
             <IonBackButton></IonBackButton>
           </IonButtons>
-          <IonTitle className="text-sm font-semibold text-center">Buscar</IonTitle>
-          <IonButtons slot="end">
-            <IonButton>
-              <IonButton color="dark" routerLink="/cart">
-                <IonIcon icon={bagOutline} />
-              </IonButton>
-            </IonButton>
-          </IonButtons>
+          <IonTitle className="font-semibold text-center">Buscar</IonTitle>
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar
