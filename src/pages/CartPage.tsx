@@ -23,7 +23,7 @@ const CartPage = () => {
   const [preferenceId, setPreferenceId] = useState(null);
   const createPreference = async () => {
     try {
-      const response = await axios.post('https://tap-api.vercel.app/create_preference', {
+      const response = await axios.post('https://tap-api.vercel.app:3000/create_preference', {
         title: 'mi compra',
         quantity: 1,
         price: totalPrice
