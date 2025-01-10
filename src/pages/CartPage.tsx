@@ -14,7 +14,6 @@ import axios from "axios";
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 
 initMercadoPago('TEST-a8cef775-7dae-43d3-b850-f2e50f6a0130');
-import { CardPayment } from '@mercadopago/sdk-react';
 
 interface Params {
   id: string;
@@ -24,10 +23,10 @@ const CartPage = () => {
   const [preferenceId, setPreferenceId] = useState(null);
   const createPreference = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/create_preference', {
-        title: 'mi producto',
+      const response = await axios.post('https://tap-api.vercel.app/create_preference', {
+        title: 'mi compra',
         quantity: 1,
-        price: 300
+        price: totalPrice
       })
       const {id} = response.data
       return id;
@@ -81,7 +80,7 @@ const CartPage = () => {
           </div>
           <div className="flex justify-between items-center gap-x-5 border-b-[1px] py-2">
             <p>Total:</p>
-            <p></p>
+            <p>{totalPrice}</p>
           </div>
           <div className="mt-3">
             <h1 className="font-semibold">Método de pago</h1>
