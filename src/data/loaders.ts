@@ -5,7 +5,7 @@ const baseUrl = getStrapiURL();
 
 async function fetchData(url:string) {
   const authToken = await getAuthToken();
-
+  if (!authToken) throw new Error("No auth token found");
   const headers = {
     method: "GET",
     headers: {
@@ -15,7 +15,7 @@ async function fetchData(url:string) {
   };
 
   try {
-    const response = await fetch(url, authToken ? headers : {});
+    const response = await fetch(url, {});
     const data = await response.json();
     return flattenAttributes(data.data);
   } catch (error) {
@@ -95,6 +95,11 @@ export async function getProducts() {
     pagination: {
       pageSize: PAGE_SIZE,
     },
+    // populate: {
+    //   cover: {
+    //     populate: true
+    //   }
+    //  },
   });
   return fetchData(`${baseUrl}/api/products?${query}`);
 }

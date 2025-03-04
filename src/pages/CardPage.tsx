@@ -14,7 +14,6 @@ import {
 } from "@ionic/react";
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
-import { postData } from "../data/loaders";
 
 const CardPage = () => {
   const [cardNumber, setCardNumber] = useState<string>('');
