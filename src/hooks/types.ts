@@ -35,7 +35,6 @@ export interface Vendor {
   longitude: number;
   openingHours: string;
   closingHours: string;
-  cover: string;
 }
 export interface Product {
   id: number;
@@ -45,7 +44,6 @@ export interface Product {
   salePrice: string;
   onSale: boolean;
   vendors: Vendor;
-  cover: string;
 }
 export interface CartItem {
   product: Product,

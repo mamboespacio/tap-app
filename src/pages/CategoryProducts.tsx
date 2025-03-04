@@ -53,7 +53,7 @@ const CategoryProducts = () => {
         {products.map((item: Vendor, index: number) => (
           <Link key={index} to={`/vendors/${item.id}`} className="non-link">
             <div className="rounded-lg overflow-hidden ">
-              <img className="aspect-video" src={item.cover} alt={item.name} />
+              <img className="aspect-video" src='assets/veggie3.png' alt={item.name} />
             </div>
             <p className="text-sm text-left font-semibold">{item.name}</p>
             <p className="text-sm text-left space-x-1">
