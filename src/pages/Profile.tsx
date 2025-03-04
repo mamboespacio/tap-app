@@ -23,7 +23,7 @@ const Profile: React.FC<Props> = () => {
     <IonPage>
       <IonHeader className="shadow-none">
         <IonToolbar>
-          <IonTitle className="font-semibold text-center">Profile</IonTitle>
+          <IonTitle className="text-sm font-semibold text-center">Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -37,7 +37,7 @@ const Profile: React.FC<Props> = () => {
           <IonItemDivider className="bg-transparent">
             <IonLabel>Tu actividad</IonLabel>
           </IonItemDivider>
-          <IonItem lines="none" button>
+          <IonItem lines="none" href="/addresses" button>
             <IonLabel>Direcciones</IonLabel>
           </IonItem>
           <IonItem lines="none" button>
@@ -46,7 +46,7 @@ const Profile: React.FC<Props> = () => {
           <IonItem lines="none" button>
             <IonLabel>Tarjetas guardadas</IonLabel>
           </IonItem>
-          <IonItem lines="none" button>
+          <IonItem lines="none" href="/orders" button>
             <IonLabel>Historial de compras</IonLabel>
           </IonItem>
           <IonItemDivider className="bg-transparent">

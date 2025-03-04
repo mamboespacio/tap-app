@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getVendorById } from "../data/loaders";
 import { IonBackButton, IonCard, IonCardContent } from "@ionic/react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import { formatTime } from "../lib/utils";
 
 interface Params {
   id: string;
@@ -51,7 +51,9 @@ const VendorPage = () => {
             <div className="relative bg-gray-50 bg-opacity-80 w-80 p-4 text-center rounded-md">
               <p className="font-semibold">{vendor.name}</p>
               <p>{vendor.address}</p>
-              <p>Horario de retiro: 17:00 a 18:00 hs</p>
+              <p>
+                Horario de retiro: {formatTime(vendor.openingHours)} a {formatTime(vendor.closingHours)}
+              </p>
               <div className="absolute top-0 right-0">
                 <IonButton color="dark" shape="round" fill="clear">
                   <IonIcon slot="icon-only" icon={heartOutline}></IonIcon>

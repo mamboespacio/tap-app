@@ -1,22 +1,24 @@
 import { useState } from "react";
-import { IonButton, IonButtons, IonList, IonItem, IonContent, IonHeader, IonIcon, IonPage, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
+import { IonButtons, IonList, IonItem, IonContent, IonHeader, IonPage, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
 import { Vendor, Product } from "../hooks/types";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../data/loaders";
 import { IonBackButton, IonCard, IonCardContent, IonFooter } from "@ionic/react";
 import { Link } from "react-router-dom";
 import { getProducts } from "../data/loaders";
+import { useIonRouter } from "@ionic/react";
 
 interface Params {
   id: string;
 }
 
 const SearchPage = () => {
+  const router = useIonRouter();
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['Products'],
     queryFn: getProducts,
   });
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState<Product[]>([]);
   
   const handleInput = (ev: Event) => {
     let query = '';
@@ -24,7 +26,7 @@ const SearchPage = () => {
     if (target) query = target.value!.toLowerCase();
     if (query) {
       const tempResults = data.filter((d: Product) => d.name.toLowerCase().includes(query.toLowerCase()));
-      setResults(tempResults.map((r: Product) => r.name));
+      setResults(tempResults);
     } else {
       setResults([]);
     }
@@ -40,12 +42,12 @@ const SearchPage = () => {
   }
   return (
     <IonPage id="category-page">
-      <IonHeader>
+      <IonHeader className="shadow-none">
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton></IonBackButton>
           </IonButtons>
-          <IonTitle className="font-semibold text-center">Buscar</IonTitle>
+          <IonTitle className="text-sm font-semibold text-center">Buscar</IonTitle>
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar
@@ -58,7 +60,15 @@ const SearchPage = () => {
       </IonHeader>
       <IonContent fullscreen>
         <IonList>
-          {results.length === 0 ? <IonItem>No results found</IonItem> : results.map((result, index) => (<IonItem key={index}>{result}</IonItem>))}
+          { results.length === 0 ? 
+            <IonItem>No results found</IonItem> :
+            results.map((result, index) => (
+              <Link to={`/products/${result.id}`} className="non-link">
+                <IonItem key={index}>
+                  {result.name}
+                </IonItem>
+              </Link>            
+              ))}
         </IonList>
       </IonContent>
     </IonPage>

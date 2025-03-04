@@ -3,11 +3,13 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonImg, IonInput,
 import { Link } from "react-router-dom";
 import './Tab1.css';
 import { getStrapiURL } from "../lib/utils";
+import { Preferences } from '@capacitor/preferences';
 import axios from "axios";
 import { z } from "zod";
 import { ZodErrors } from "../components/ZodError";
 import { useUserStore } from "../data/UserStore";
 import { useSessionStore } from "../data/SessionStore";
+
 
 export interface Props {}
 
@@ -74,6 +76,10 @@ const Login: React.FC<Props> = () => {
         console.log("User token", response.data.jwt);
         userStore.setUser(response.data.user);
         sessionStore.setSession(response.data.jwt);
+        Preferences.set({
+          key: 'authToken',
+          value: response.data.jwt,
+        });
         router.push('/home', 'root', 'replace');
       })
       .catch((error) => {

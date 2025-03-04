@@ -1,6 +1,16 @@
-import { CapacitorCookies } from '@capacitor/core';
+import { Preferences } from "@capacitor/preferences";
 import axios from "axios";
+import { clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 
+export function cn(...inputs: any[]) {
+  return twMerge(clsx(inputs))
+}
+
+export const formatTime = (time: string) => {
+  const [hour, minute] = time.split(':');
+  return `${hour}:${minute}`;
+}
 
 export function flattenAttributes(data:any) {
   // Check if data is a plain object; return as is if not
@@ -43,14 +53,15 @@ export function flattenAttributes(data:any) {
 }
 
 export function getStrapiURL() {
-  // return process.env.STRAPI_URL ?? "http://127.0.0.1:1337";
-  return "https://tap-cms-4a4db946442e.herokuapp.com";
+  return process.env.STRAPI_URL ?? "http://127.0.0.1:1337";
+  // return "https://tap-cms-4a4db946442e.herokuapp.com";
 }
 
 export async function getAuthToken() {
-  const authToken = document.cookie;
-  return authToken;
+  const authToken = await Preferences.get({ key: 'authToken' });
+  return authToken.value;
 }
+
 
 export const api = axios.create({
   baseURL: getStrapiURL(),

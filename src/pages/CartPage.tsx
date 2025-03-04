@@ -1,48 +1,63 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { IonItem, IonButton, IonButtons, IonLabel, IonContent, IonGrid, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonNote, IonPage, IonRow, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
-import { trashOutline } from "ionicons/icons";
-import { useParams } from "react-router"
-import { Vendor, Product } from "../hooks/types";
-import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../data/loaders";
 import { useCartStore } from "../data/CartStore";
+import { useUserStore } from "../data/UserStore";
 import { IonBackButton, IonCard, IonCardContent, IonFooter } from "@ionic/react";
 import { Link } from "react-router-dom";
 import CartItem from "../components/CartItem";
 import axios from "axios";
+import { mutateData } from "../data/loaders";
+import { Order } from "../hooks/types";
 
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+import { cart } from "ionicons/icons";
 
-initMercadoPago('TEST-a8cef775-7dae-43d3-b850-f2e50f6a0130');
-
-interface Params {
-  id: string;
-}
+initMercadoPago('TEST-a8cef775-7dae-43d3-b850-f2e50f6a0130', { locale: 'es-AR' });
 
 const CartPage = () => {
   const [preferenceId, setPreferenceId] = useState(null);
+
+  const createOrder = async () => {
+    const price = totalPrice.toString();
+    console.log('creating order', user);
+  
+    const response = await mutateData('POST', 'orders', {  
+      data: {
+        users_permissions_user: user.user.id,
+        vendor: cartProducts[0].product.vendors[0].id,
+        condition: 'pending',
+        products: cartProducts,
+        price: price,
+      }
+    })
+    .then(response => {
+      console.log(response.data);
+      // presentToast("Dirección Guardada", 'top');
+      // router.push('/home', 'back');
+    })
+    .catch(error => {
+      console.log(error);
+      // presentToast("Error: " + error, 'top')
+    })
+  }
+
   const createPreference = async () => {
     try {
-      const response = await axios.post('https://tap-api.vercel.app:3000/create_preference', {
+      const response = await axios.post('https://tap-api.vercel.app/create_preference', {
         title: 'mi compra',
         quantity: 1,
         price: totalPrice
       })
       const {id} = response.data
-      return id;
+      return setPreferenceId(id);
     }
     catch (error) {
       console.log(error);
     }
-  }
-  
-  const handleBuy = async () => {
-    const id = await createPreference()
-    if (id) {
-      setPreferenceId(id)
-    }
-  }
+  };
 
+  const user = useUserStore();
   const { products: cartProducts, removeAll } = useCartStore();
   let totalPrice = cartProducts.reduce((previousValue, currentValue) => {
     return previousValue + currentValue.quantity * currentValue.product.price;
@@ -58,7 +73,7 @@ const CartPage = () => {
           <IonTitle className="font-semibold text-center">Confirma tu pedido</IonTitle>
           <IonButtons slot="end">
             <IonButton>
-              <IonButton color="dark">
+              <IonButton color="dark" onClick={removeAll}>
                 Vaciar
               </IonButton>
             </IonButton>
@@ -83,12 +98,6 @@ const CartPage = () => {
             <p>{totalPrice}</p>
           </div>
           <div className="mt-3">
-            <h1 className="font-semibold">Método de pago</h1>
-            <IonItem lines="none" href="/card" button>
-              <IonLabel>Selecionar...</IonLabel>
-            </IonItem>
-          </div>
-          <div className="mt-3">
             <h1 className="font-semibold">Información importante</h1>
           </div>
           <div className="grid grid-flow-col justify-stretch mt-3 rounded-md bg-gray-50 px-4 py-2 ring-1 ring-inset ring-gray-500/10">
@@ -101,9 +110,18 @@ const CartPage = () => {
               <p className="text-semibold">4 a 6</p>
             </div>
           </div>
-          <div className="flex flex-column py-2 border-b-1 mt-8 justify-center">
-            { preferenceId && (<Wallet initialization={preferenceId}></Wallet>)}
-            <IonButton className="normal-case" shape="round" onClick={handleBuy}>Confirmar pago</IonButton>
+          <div className="mt-3">
+            <div className="">
+              <IonButton
+                className="mt-4"
+                onClick={() => createOrder()}
+                expand="block">Confirmar pedido
+              </IonButton>
+            { preferenceId &&
+              <Wallet initialization={{ preferenceId: preferenceId }} />
+              
+            }
+            </div>
           </div>
         </div>
       </IonContent>

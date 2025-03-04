@@ -1,20 +1,22 @@
-import { useRef } from "react";
-import { IonBadge, IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonNote, IonPage, IonRow, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
-import { heart, heartOutline, chevronBackOutline } from "ionicons/icons";
+import { useState } from "react";
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonNote, IonPage, IonRow, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react";
+import { removeOutline, addOutline } from "ionicons/icons";
 import { useParams } from "react-router"
 import { Vendor, Product } from "../hooks/types";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../data/loaders";
 import { useCartStore } from "../data/CartStore";
-import { IonBackButton, IonCard, IonCardContent, IonFooter } from "@ionic/react";
-import { Link } from "react-router-dom";
 import CartButton from "../components/CartButton";
+import FavouriteButton from "../components/FavouriteButton";
+import { GetDistance } from "../components/GetDistance";
+import { formatTime } from "../lib/utils";
 
 interface Params {
   id: string;
 }
 
 const ProductPage = () => {
+  const [quantity, setQuantity] = useState(1);
   const {products: cartProducts, addItem} = useCartStore();
   const params = useParams<Params>();
   const productId = params?.id;
@@ -22,6 +24,12 @@ const ProductPage = () => {
     queryKey: ['product', productId],
     queryFn: () => getProductById(productId)
   })
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
+  }
+  const decreaseQuantity = () => {
+    quantity > 1 ? setQuantity(quantity - 1) : setQuantity(1);
+  }
   if (isPending) {
     return <span>Loading...</span>
   }
@@ -29,6 +37,7 @@ const ProductPage = () => {
     return <span>Error: {error.message}</span>
   }
   const product = data[0];
+  const vendor = product?.vendors[0];
   return (
     <IonPage id="category-page">
       <IonHeader translucent={true}>
@@ -42,21 +51,17 @@ const ProductPage = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-
       <IonContent fullscreen>
         <div className="relative flex">
           <img className="aspect-square" src='assets/veggie3.png' />
           <div className="flex items-center absolute w-full h-full justify-center">
             <div className="relative bg-gray-50 bg-opacity-80 w-80 p-4 text-center rounded-md">
-              <p className="font-semibold">Burger Food</p>
-              <p>Laprida 879, CABA</p>
-              <p>Horario de retiro: 17:00 a 18:00 hs</p>
-              <div className="absolute top-0 right-0">
-                <IonButton color="dark" shape="round" fill="clear">
-                  <IonIcon slot="icon-only" icon={heartOutline}></IonIcon>
-                </IonButton>
-              </div>
-              
+              <p className="font-semibold">{vendor.name}</p>
+              <p>{vendor.address}</p>
+              <p>
+                Horario de retiro: {formatTime(vendor.openingHours)} a {formatTime(vendor.closingHours)}
+              </p>
+              <FavouriteButton product={product}/>
             </div>
           </div>
         </div>
@@ -76,22 +81,22 @@ const ProductPage = () => {
             </p>
           </div>
           <div className="flex justify-between items-center pt-2">
-            <div className="max-w-[6rem]">
-              <div className="flex border border-black rounded-md">
-                <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" className="border border-gray-300 rounded-s-lg p-3 h-8 focus:outline-none">
-                  <svg className="w-3 h-3 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
-                  </svg>
-                </button>
-                <input type="text" id="quantity-input" data-input-counter aria-describedby="helper-text-explanation" className="border-gray-300 h-8 text-center bg-white text-gray-900 text-sm block w-full py-2.5 " placeholder="99" required />
-                <button type="button" id="increment-button" data-input-counter-increment="quantity-input" className="border border-gray-300 rounded-s-lg p-3 h-8 focus:outline-none">
-                  <svg className="w-3 h-3 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
-                  </svg>
-                </button>
+            <div className="max-w-[6rem] flex item-center border-[1px] rounded-md p-2 mb-2">
+              <button
+                onClick={() => decreaseQuantity()}
+                className="w-6 h-6 font-medium rounded-full">
+                  <IonIcon icon={removeOutline}/> 
+              </button>
+              <div>
+                <span className="font-medium">{quantity}</span>
               </div>
+              <button
+                onClick={() => increaseQuantity()}
+                className="w-6 h-6 font-medium rounded-full">
+                <IonIcon icon={addOutline} />
+              </button>
             </div>
-            <IonButton shape="round" onClick={e => addItem({product, quantity: 1})}>Salvar</IonButton>
+            <IonButton shape="round" onClick={e => addItem({product, quantity: quantity})}>Salvar</IonButton>
           </div>
           <div>
             <p className="text-xs">3 disponibles</p>

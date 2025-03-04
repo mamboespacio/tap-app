@@ -16,6 +16,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Location from './pages/GeoLocation';
 import Profile from './pages/Profile';
+import AddressesPage from './pages/AddressesPage';
+import OrdersPage from './pages/OrdersPage';
 import CategoryProducts from './pages/CategoryProducts';
 import ProductPage from './pages/ProductPage';
 import CardPage from './pages/CardPage';
@@ -70,6 +72,12 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/profile">
             <Profile />
+          </Route>
+          <Route exact path="/addresses">
+            <AddressesPage />
+          </Route>
+          <Route exact path="/orders">
+            <OrdersPage />
           </Route>
           <Route exact path="/location">
             <Location />

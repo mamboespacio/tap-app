@@ -1,39 +1,68 @@
-import React, { useState, useRef, useEffect } from "react";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter, IonButtons, IonBackButton, IonButton } from '@ionic/react';
-import './Tab1.css';
+import React, { useState, useEffect } from "react";
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter, IonButtons, IonBackButton, IonButton, IonInput, useIonToast, IonModal, useIonRouter } from '@ionic/react';
 import { Geolocation } from '@capacitor/geolocation';
-import { GoogleMap } from '@capacitor/google-maps';
+import Map, {Marker} from 'react-map-gl/maplibre';
+import { mutateData } from "../data/loaders";
+import { useAddressStore } from "../data/AddressStore";
 
 export interface Props { }
+export interface ViewState {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+}
+export interface Marker {
+  longitude?: number;
+  latitude?: number;
+}
 
-const Location: React.FC<Props> = () => {
-  const mapRef = useRef<HTMLElement>();
-  const [map, setMap] = useState(null);
+const Location = () => {
+  const router = useIonRouter();
+  const addressStore = useAddressStore();
+  const [viewState, setViewState] = React.useState<ViewState>();
+  const [marker, setMarker] = React.useState<Marker>({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [addressName, setAddressName] = useState('');
+  const [present] = useIonToast();
+  const presentToast = (message:string, position: 'top' | 'middle' | 'bottom') => {
+    present({
+      message: message,
+      duration: 1500,
+      position: position,
+    });
+  };
+
+  const saveAddress = async (name: string) => {
+    const response = await mutateData('POST', 'addresses', {  
+      data: {
+        name: name,
+        longitude: viewState.longitude,
+        latitude: viewState.latitude
+      }
+    })
+    .then(response => {
+      setIsOpen(false);
+      console.log(response.data);
+      addressStore.setAddress(response.data);
+      // presentToast("Dirección Guardada", 'top');
+      router.push('/home', 'back');
+    })
+    .catch(error => {
+      presentToast("Error: " + error, 'top')
+    })
+  }
 
   useEffect(() => {
     const createMap = async () => {
       const location = await Geolocation.getCurrentPosition();
-      if (!mapRef.current) return;
-
-      const newMap:GoogleMap = await GoogleMap.create({
-        id: 'my-map',
-        element: mapRef.current,
-        apiKey: 'AIzaSyDFiuw-mEL0_gSTEtW5D5gG_aago5hdz3s',
-        config: {
-          center: {
-            lat: location.coords.latitude,
-            lng: location.coords.longitude,
-          },
-          zoom: 15,
-        },
-      });
-      setMap(newMap);
-
-      const markerId = await map.addMarker({
-        coordinate: {
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        }
+      setViewState({
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude,
+        zoom: 16
+      })
+      setMarker({
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude
       });
     };
     createMap();
@@ -53,25 +82,50 @@ const Location: React.FC<Props> = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="space-y-8">
-        
-          <div className="component-wrapper">
-            <capacitor-google-map
-              ref={mapRef}
-              className=""
-              style={{
-                display: 'inline-block',
-                width: '100%',
-                height:' 90vh'
-              }}
-            >
-            </capacitor-google-map>
-          </div>
+        <div className="h-full">
+          { viewState ? 
+              <Map
+                {...viewState}
+                mapStyle="https://api.maptiler.com/maps/streets/style.json?key=eOkRnUiFQShLNosQA82y"
+              >
+                {/* <Marker longitude={marker.longitude} latitude={marker.latitude} color="red"  /> */}
+              </Map>
+            : <div>Geolocation not available</div> 
+          }
         </div>
+        <IonModal
+          isOpen={isOpen}
+          onWillDismiss={() => setIsOpen(false)}
+        >
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Guardar Dirección</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setIsOpen(false)}>Close</IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="ion-padding">
+            <form className="flex flex-col items-center">
+              <IonInput
+                label="Nombre"
+                labelPlacement="stacked"
+                type="text"
+                placeholder="Por ejemplo: Casa"
+                onIonChange={(e: any) => setAddressName(e.target.value)}
+              />
+              <IonButton
+                className="mt-4"
+                onClick={() => saveAddress(addressName)}
+                expand="block">Guardar Dirección
+              </IonButton>
+            </form>
+          </IonContent>
+        </IonModal>
       </IonContent>
       <IonFooter>
         <IonToolbar className="bg-transparent">
-          <IonButton routerLink="/home" expand="block">Guardar Dirección</IonButton>
+          <IonButton onClick={() => setIsOpen(true)} expand="block">Confirmar Dirección</IonButton>
         </IonToolbar>
       </IonFooter>
     </IonPage>
